@@ -1,26 +1,32 @@
 package pl.pollub.task;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-import pl.pollub.Greeting;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/tasks")
 public class TaskController {
 
+    private final TaskList taskList;
+
     @Autowired
-    private TaskList taskList;
+    public TaskController(TaskList taskList) {
+        this.taskList = taskList;
+    }
 
-//    @RequestMapping(method= RequestMethod.POST)
-//    public void addTask(@RequestBody Task task) {
-//        taskList.add(task);
-//    }
+    @RequestMapping(method = RequestMethod.POST)
+    public @ResponseBody Task addTask(@RequestBody NewTask newTask) {
+        return taskList.add(newTask);
+    }
 
-    public List<Task> getAllTasks(){
+    @RequestMapping(method = RequestMethod.GET)
+    public @ResponseBody List<Task> getAllTasks() {
         return taskList.getAllTasks();
     }
 
