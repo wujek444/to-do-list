@@ -29,6 +29,7 @@ public class TaskListTest {
         Task task = taskList.getAllTasks().get(0);
 
         //then: it diesappears
+
     }
 
 }
