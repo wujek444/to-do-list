@@ -17,14 +17,16 @@ public class TaskService {
 
     private final AtomicInteger counter = new AtomicInteger();
 
-    public void createTaskForUser(int userId, Integer... contributors){
-        new Task(counter.incrementAndGet(), userId,
-                 contributors != null ? Arrays.asList(contributors) : Collections.emptyList());
+    public Task createTaskForUser(int userId, Integer... contributors){
+        Task task = new Task(counter.incrementAndGet(), userId,
+                             contributors != null ? Arrays.asList(contributors) : Collections.emptyList());
+        tasks.put(task.getId(), task);
+        return task;
     }
 
     public void completeTask(int taskId){
         Task task = tasks.get(taskId);
-        List<Integer> userIds = task.getContributors();
+        List<Integer> userIds = new ArrayList(task.getContributors());
         userIds.add(task.getUserId());
 
         Set<String> emails = userIds.stream()
