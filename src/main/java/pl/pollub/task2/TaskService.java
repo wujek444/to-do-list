@@ -27,7 +27,10 @@ public class TaskService {
         List<Integer> userIds = task.getContributors();
         userIds.add(task.getUserId());
 
-        Set<String> emails = userIds.stream().map(userService::getUserById).map(User::getEmail).collect(Collectors.toSet());
+        Set<String> emails = userIds.stream()
+                                    .map(userService::getUserById)
+                                    .map(User::getEmail)
+                                    .collect(Collectors.toSet());
 
         emailNotifier.notify(taskId, emails);
     }
