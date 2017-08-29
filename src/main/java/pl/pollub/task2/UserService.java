@@ -4,4 +4,6 @@ public interface UserService {
 
     User getUserById(int id);
 
+    void addUsers(User... usersToAdd);
+
 }

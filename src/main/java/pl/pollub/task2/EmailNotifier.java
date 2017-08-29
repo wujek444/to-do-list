@@ -6,4 +6,6 @@ public interface EmailNotifier {
 
     void notify(int taskId, Collection<String> emails);
 
+    MockEmailNotification getResultNotification();
+
 }

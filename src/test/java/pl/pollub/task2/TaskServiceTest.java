@@ -1,14 +1,15 @@
 package pl.pollub.task2;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
-import org.junit.Assert;
+import org.assertj.core.util.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TaskServiceTest {
@@ -42,7 +43,45 @@ public class TaskServiceTest {
         HashSet<String> notified = new HashSet<>(emailsCaptor.getValue());
         HashSet<String> expected = new HashSet<>(Arrays.asList("user1@wp.pl", "user2@wp.pl", "user3@wp.pl"));
 
-        Assert.assertEquals(expected, notified);
+        assertEquals(expected, notified);
+    }
+
+    @Test
+    public void sendEmailToOwnerAndContributorsUsingNoMockito(){
+        //we've got 3 users:
+        User user1 = new User(1, "user1@wp.pl");
+        User user2 = new User(2, "user2@wp.pl");
+        User user3 = new User(3, "user3@wp.pl");
+
+        //we need a taskService in order to create task for user (with contributors):
+        TaskService taskService = null;
+
+        //but to create taskService, we need userService and emailNotifier:
+        UserService userService = new UserServiceMockImplementation();
+        userService.addUsers(user1, user2, user3);
+        EmailNotifier mockEmailNotifier = new EmailNotifierMockImplementation();
+
+        //having all of these, now we can create needed taskService:
+        taskService = new TaskService(userService, mockEmailNotifier);
+
+        //and using it, we can create a task for user and his collaborators:
+        Task sharedTask =
+                taskService.createTaskForUser(user1.getId(), user2.getId(), user3.getId());
+
+        //then we can complete this task:
+        taskService.completeTask(sharedTask.getId());
+
+        //and finally, using emailNotifier's mock implementation, we can look into 'completeTask'
+        // call args:
+        MockEmailNotification mockNotification = mockEmailNotifier.getResultNotification();
+
+        Collection<String> expectedEmails =
+                Lists.newArrayList(user1.getEmail(), user2.getEmail(), user3.getEmail());
+
+        assertEquals(sharedTask.getId(), mockNotification.getTaskId());
+        assertEquals(3, mockNotification.getEmails().size());
+        assertTrue(mockNotification.getEmails().containsAll(expectedEmails));
+
     }
 
 }
