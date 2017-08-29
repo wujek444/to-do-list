@@ -24,13 +24,14 @@ public class TaskService {
         return task;
     }
 
-    public void completeTask(int taskId){
+    public void completeTask(int taskId, int idOfUserWhoCompletedTask){
         Task task = tasks.get(taskId);
+        task.setIdOfUserWhoCompletedTask(idOfUserWhoCompletedTask);
         List<Integer> userIds = new ArrayList(task.getContributors());
         userIds.add(task.getUserId());
 
         Set<String> emails = userIds.stream()
-                                    .filter(userId -> userId != task.getUserId())
+                                    .filter(userId -> userId != task.getIdOfUserWhoCompletedTask())
                                     .map(userService::getUserById)
                                     .map(User::getEmail)
                                     .collect(Collectors.toSet());

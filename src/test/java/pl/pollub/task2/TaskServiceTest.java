@@ -35,13 +35,15 @@ public class TaskServiceTest {
             return new User(id, "user" + id + "@wp.pl");
         });
 
-        taskService.completeTask(task.getId());
+
+        //then user1 completes the task:
+        taskService.completeTask(task.getId(), 1);
         //check if email sent to users: [1,2,3]
 
         Mockito.verify(emailNotifier).notify(Mockito.eq(task.getId()), emailsCaptor.capture());
 
         HashSet<String> notified = new HashSet<>(emailsCaptor.getValue());
-        HashSet<String> expected = new HashSet<>(Arrays.asList("user1@wp.pl", "user2@wp.pl", "user3@wp.pl"));
+        HashSet<String> expected = new HashSet<>(Arrays.asList("user2@wp.pl", "user3@wp.pl"));
 
         assertEquals(expected, notified);
     }
@@ -68,8 +70,8 @@ public class TaskServiceTest {
         Task sharedTask =
                 taskService.createTaskForUser(user1.getId(), user2.getId(), user3.getId());
 
-        //then we can complete this task:
-        taskService.completeTask(sharedTask.getId());
+        //then user1 completes this task:
+        taskService.completeTask(sharedTask.getId(), user1.getId());
 
         //and finally, using emailNotifier's mock implementation, we can look into 'completeTask'
         // call args:
