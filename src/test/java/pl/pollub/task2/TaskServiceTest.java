@@ -35,7 +35,6 @@ public class TaskServiceTest {
             return new User(id, "user" + id + "@wp.pl");
         });
 
-
         //then user1 completes the task:
         taskService.completeTask(task.getId(), 1);
         //check if email sent to users: [1,2,3]
