@@ -53,7 +53,7 @@ public class TaskServiceTest {
         User user2 = new User(2, "user2@wp.pl");
         User user3 = new User(3, "user3@wp.pl");
 
-        //we need a taskService in order to create task for user (with contributors):
+        //but we need a taskService in order to create task for user (with contributors):
         TaskService taskService = null;
 
         //but to create taskService, we need userService and emailNotifier:
@@ -76,12 +76,12 @@ public class TaskServiceTest {
         MockEmailNotification mockNotification = mockEmailNotifier.getResultNotification();
 
         Collection<String> expectedEmails =
-                Lists.newArrayList(user1.getEmail(), user2.getEmail(), user3.getEmail());
+                Lists.newArrayList(user2.getEmail(), user3.getEmail());
 
+        //and see if notifications were sent to certain users (not the task's owner):
         assertEquals(sharedTask.getId(), mockNotification.getTaskId());
-        assertEquals(3, mockNotification.getEmails().size());
+        assertEquals(2, mockNotification.getEmails().size());
         assertTrue(mockNotification.getEmails().containsAll(expectedEmails));
-
     }
 
 }

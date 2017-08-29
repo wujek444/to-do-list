@@ -30,6 +30,7 @@ public class TaskService {
         userIds.add(task.getUserId());
 
         Set<String> emails = userIds.stream()
+                                    .filter(userId -> userId != task.getUserId())
                                     .map(userService::getUserById)
                                     .map(User::getEmail)
                                     .collect(Collectors.toSet());
